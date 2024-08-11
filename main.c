@@ -50,8 +50,11 @@ int main() {
     struct repeating_timer *led_timer = setup_led();
 
     buzzer_t *buzzer = buzzer_new(BUZZER);
+    buzzer_set_enabled(buzzer, true);
 
     while (true) {
         buzzer_play_tone(buzzer);
+        buzzer_play_tone(buzzer);
+        sleep_ms(10000);
     }
 }

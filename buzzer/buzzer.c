@@ -18,23 +18,23 @@ buzzer_t *buzzer_new(uint8_t pin) {
     }
     buzzer->enabled = false;
     buzzer->pin = pin;
-    buzzer->volume = 15;
+    buzzer->duty = 15;
 
     gpio_set_function(buzzer->pin, GPIO_FUNC_PWM);
 
     float notes[12] = {
-        261.63, // 0 C
-        277.18, // 1 C#
-        293.66, // 2 D
-        311.13, // 3 D#
-        329.63, // 4 E
-        349.23, // 5 F
-        369.99, // 6 F#
-        392,    // 7 G
-        415.30, // 8 G#
-        440,    // 9 A
-        466.16, // 10 A#
-        493.88, // 11 B
+        261, // 0 C
+        277, // 1 C#
+        293, // 2 D
+        311, // 3 D#
+        329, // 4 E
+        349, // 5 F
+        369, // 6 F#
+        392, // 7 G
+        415, // 8 G#
+        440, // 9 A
+        466, // 10 A#
+        493, // 11 B
     };
 
     memcpy(buzzer->notes, notes, 12 * sizeof(float));
@@ -54,7 +54,7 @@ void buzzer_toggle_enabled(buzzer_t *buzzer) {
     buzzer->enabled = !buzzer->enabled;
 }
 
-void buzzer_set_freq(const buzzer_t *buzzer, uint32_t f) {
+void buzzer_set_freq(buzzer_t *buzzer, uint32_t f) {
     uint32_t clock = 125000000;
     uint32_t divider16 = clock / f / 4096 + (clock % (f * 4096) != 0);
 
@@ -63,11 +63,18 @@ void buzzer_set_freq(const buzzer_t *buzzer, uint32_t f) {
     }
 
     uint32_t wrap = clock * 16 / divider16 / f - 1;
+
+    buzzer->wrap = wrap;
+
     pwm_set_clkdiv_int_frac(buzzer->slice, divider16 / 16, divider16 & 0xF);
     pwm_set_wrap(buzzer->slice, wrap);
     pwm_set_chan_level(
-        buzzer->slice, buzzer->channel, wrap * buzzer->volume / 100
+        buzzer->slice, buzzer->channel, wrap * buzzer->duty / 100
     );
+}
+
+void buzzer_set_volume(buzzer_t *buzzer, uint8_t volume) {
+    pwm_set_chan_level(buzzer->slice, buzzer->channel, buzzer->wrap * volume);
 }
 
 void buzzer_play_scale(buzzer_t *buzzer) {
@@ -102,19 +109,18 @@ void buzzer_play_scale(buzzer_t *buzzer) {
 
 void buzzer_play_tone(buzzer_t *buzzer) {
 
-    buzzer_set_enabled(buzzer, true);
+    buzzer_set_volume(buzzer, buzzer->duty);
 
-    float F = buzzer->notes[5] *2 ;
-    float A = buzzer->notes[9] *2;
-    float B = buzzer->notes[11] *2;
+    float F = buzzer->notes[5] * 2 * 2 * 2;
+    float A = buzzer->notes[9] * 2 * 2 * 2;
+    float B = buzzer->notes[11] * 2 * 2 * 2;
 
     buzzer_set_freq(buzzer, F);
-    sleep_ms(350);
+    sleep_ms(100);
     buzzer_set_freq(buzzer, A);
-    sleep_ms(350);
+    sleep_ms(100);
     buzzer_set_freq(buzzer, B);
-    sleep_ms(350);
-
-    buzzer_set_enabled(buzzer, false);
-    sleep_ms(350);
+    sleep_ms(200);
+    sleep_ms(200);
+    buzzer_set_volume(buzzer, 0);
 }
