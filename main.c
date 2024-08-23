@@ -63,9 +63,9 @@ int main() {
         // buzzer_play_tone(buzzer);
         // buzzer_play_tone(buzzer);
         for (uint8_t i = 0; i < 8; i++) {
-            shift_register_set(sr, i);
-            sleep_ms(100);
+            shift_register_set(sr, 1 << (8-i));
+            sleep_ms(30);
         }
-        sleep_ms(1000);
+        sleep_ms(200);
     }
 }

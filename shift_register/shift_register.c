@@ -50,4 +50,5 @@ bool shift_register_set(shift_register_t *sr, uint8_t value) {
     }
 
     shift_register_latch(sr);
+    return true;
 }
