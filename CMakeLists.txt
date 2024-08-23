@@ -17,6 +17,7 @@ pico_sdk_init()
 add_executable(${CMAKE_PROJECT_NAME}
     main.c
     buzzer/buzzer.c
+    shift_register/shift_register.c
 )
 
 pico_enable_stdio_usb(${CMAKE_PROJECT_NAME} 1)

@@ -107,20 +107,33 @@ void buzzer_play_scale(buzzer_t *buzzer) {
     }
 }
 
+// void buzzer_play_tone(buzzer_t *buzzer) {
+
+//     buzzer_set_volume(buzzer, buzzer->duty);
+
+//     float F = buzzer->notes[5] * 2 * 2 * 2;
+//     float A = buzzer->notes[9] * 2 * 2 * 2;
+//     float B = buzzer->notes[11] * 2 * 2 * 2;
+
+//     buzzer_set_freq(buzzer, F);
+//     sleep_ms(150);
+//     buzzer_set_freq(buzzer, A);
+//     sleep_ms(150);
+//     buzzer_set_freq(buzzer, B);
+//     sleep_ms(300);
+//     buzzer_set_volume(buzzer, 0);
+// }
+
 void buzzer_play_tone(buzzer_t *buzzer) {
 
     buzzer_set_volume(buzzer, buzzer->duty);
 
-    float F = buzzer->notes[5] * 2 * 2 * 2;
+    float F = buzzer->notes[5] * 2 * 2 * 2 *2 ;
     float A = buzzer->notes[9] * 2 * 2 * 2;
     float B = buzzer->notes[11] * 2 * 2 * 2;
 
-    buzzer_set_freq(buzzer, F);
-    sleep_ms(100);
-    buzzer_set_freq(buzzer, A);
-    sleep_ms(100);
     buzzer_set_freq(buzzer, B);
-    sleep_ms(200);
-    sleep_ms(200);
+    sleep_ms(150);
     buzzer_set_volume(buzzer, 0);
+    sleep_ms(150);
 }
