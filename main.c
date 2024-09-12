@@ -4,41 +4,16 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "hardware/gpio.h"
-#include "hardware/pwm.h"
+#include "7seg/7seg.h"
 #include "pico/stdlib.h"
 
-#include "buzzer/buzzer.h"
-#include "shift_register/shift_register.h"
+const uint8_t PIN_A = 1;
+const uint8_t PIN_B = 2;
+const uint8_t PIN_C = 3;
+const uint8_t PIN_D = 4;
 
-const uint8_t LED_GREEN = 14;
-const uint8_t BUZZER = 16;
-const uint32_t PIN_MASK = (1u << LED_GREEN);
-
-const uint8_t SER = 17;
-const uint8_t RCLK = 18;
-const uint8_t SHCLK = 19;
-
-volatile bool led_state = false;
-
-bool repeating_toogle_led() {
-    led_state = !led_state;
-    gpio_put(LED_GREEN, led_state);
-    return true;
-}
-
-struct repeating_timer *setup_led() {
-    printf("initializing timer\n");
-    gpio_set_dir(LED_GREEN, true);
-    gpio_put(LED_GREEN, true);
-
-    struct repeating_timer *led_timer =
-        calloc(1, sizeof(struct repeating_timer));
-
-    add_repeating_timer_ms(500, repeating_toogle_led, NULL, led_timer);
-    printf("timer initialized\n");
-    return led_timer;
-}
+const uint32_t PIN_MASK =
+    (1 << PIN_A) | (1 << PIN_B) | (1 << PIN_C) | (1 << PIN_D);
 
 int main() {
 
@@ -52,20 +27,28 @@ int main() {
     gpio_set_dir_out_masked(PIN_MASK);
     gpio_put_masked(PIN_MASK, PIN_MASK);
 
-    shift_register_t *sr = shift_register_init(SER, RCLK, SHCLK);
+    seveng_seg_t *s = seven_seg_initialize(PIN_A, PIN_B, PIN_C, PIN_D);
 
-    struct repeating_timer *led_timer = setup_led();
-
-    buzzer_t *buzzer = buzzer_new(BUZZER);
-    buzzer_set_enabled(buzzer, true);
+    uint8_t value = 0;
 
     while (true) {
-        // buzzer_play_tone(buzzer);
-        // buzzer_play_tone(buzzer);
-        for (uint8_t i = 0; i < 8; i++) {
-            shift_register_set(sr, 1 << (8-i));
-            sleep_ms(30);
+
+        printf("setting %d\n", value);
+
+        seven_seg_set_value(s, value);
+        value += 1;
+
+        if (value > 9) {
+            break;
         }
-        sleep_ms(200);
+
+        sleep_ms(1000);
     }
+
+    seven_seg_start_pio(s);
+    
+    while (true){
+        tight_loop_contents();
+    }
+    
 }

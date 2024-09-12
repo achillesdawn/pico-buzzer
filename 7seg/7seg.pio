@@ -1,0 +1,37 @@
+.program sevenseg
+
+
+pull
+.wrap_target
+    out pins, 4
+    out null, 4
+    out pins, 4
+    out null, 4
+.wrap
+
+% c-sdk {
+static inline void sevenseg_program_init(PIO pio, uint sm, uint offset, uint pin) {
+    pio_sm_config c = sevenseg_program_get_default_config(offset);
+
+    // Map the state machine's OUT pin group to one pin, namely the `pin`
+    // parameter to this function.
+    // initialize a slice of 4
+    sm_config_set_out_pins(&c, pin, 4);
+
+    // Set this pin's GPIO function (connect PIO to the pad)
+    // set the slice pins to gpio function PIO
+    pio_gpio_init(pio, pin);
+    pio_gpio_init(pio, pin+1);
+    pio_gpio_init(pio, pin+2);
+    pio_gpio_init(pio, pin+3);
+
+    // Set the pin direction to output at the PIO
+    pio_sm_set_consecutive_pindirs(pio, sm, pin, 4, true);
+
+    // Load our configuration, and jump to the start of the program
+    pio_sm_init(pio, sm, offset, &c);
+
+    // Set the state machine running
+    pio_sm_set_enabled(pio, sm, true);
+}
+%}
