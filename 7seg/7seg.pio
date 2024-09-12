@@ -1,12 +1,13 @@
 .program sevenseg
 
-
-pull
+pull block
+mov y, osr
 .wrap_target
-    out pins, 4
-    out null, 4
-    out pins, 4
-    out null, 4
+    out pins, 4 [31]
+    out null, 4 [31]
+    out pins, 4 [31]
+    out null, 4 [31]
+    mov osr, y
 .wrap
 
 % c-sdk {
@@ -27,6 +28,10 @@ static inline void sevenseg_program_init(PIO pio, uint sm, uint offset, uint pin
 
     // Set the pin direction to output at the PIO
     pio_sm_set_consecutive_pindirs(pio, sm, pin, 4, true);
+
+    // clock divider
+    uint16_t div_int = 65000;
+    pio_sm_set_clkdiv_int_frac(pio, sm, div_int, 0u);
 
     // Load our configuration, and jump to the start of the program
     pio_sm_init(pio, sm, offset, &c);

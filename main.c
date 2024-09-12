@@ -7,10 +7,10 @@
 #include "7seg/7seg.h"
 #include "pico/stdlib.h"
 
-const uint8_t PIN_A = 1;
-const uint8_t PIN_B = 2;
-const uint8_t PIN_C = 3;
-const uint8_t PIN_D = 4;
+const uint8_t PIN_A = 0;
+const uint8_t PIN_B = 1;
+const uint8_t PIN_C = 2;
+const uint8_t PIN_D = 3;
 
 const uint32_t PIN_MASK =
     (1 << PIN_A) | (1 << PIN_B) | (1 << PIN_C) | (1 << PIN_D);
@@ -42,7 +42,7 @@ int main() {
             break;
         }
 
-        sleep_ms(1000);
+        sleep_ms(200);
     }
 
     seven_seg_start_pio(s);
