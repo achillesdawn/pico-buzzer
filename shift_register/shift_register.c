@@ -24,21 +24,27 @@ shift_register_init(uint8_t SER, uint8_t RCLK, uint8_t SHCLK) {
     return sr;
 }
 
-void shift_register_pulse(shift_register_t *sr) {
+inline static void sleep_ns() {
+    for (uint8_t i = 0; i < 4; i++) {
+        tight_loop_contents();
+    }
+}
+
+inline static void shift_register_pulse(shift_register_t *sr) {
     gpio_put(sr->srclk_shift_register_clock, 1);
-    sleep_us(1);
+    sleep_ns();
     gpio_put(sr->srclk_shift_register_clock, 0);
-    sleep_us(1);
+    sleep_ns();
 }
 
-void shift_register_latch(shift_register_t *sr) {
+inline static void shift_register_latch(shift_register_t *sr) {
     gpio_put(sr->rclk_storage_register_clock, 1);
-    sleep_us(1);
+    sleep_ns();
     gpio_put(sr->rclk_storage_register_clock, 0);
-    sleep_us(1);
+    sleep_ns();
 }
 
-void shift_register_push(shift_register_t *sr, bool value) {
+inline static void shift_register_push(shift_register_t *sr, bool value) {
     gpio_put(sr->ser, value);
     shift_register_pulse(sr);
 }

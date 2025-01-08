@@ -1,7 +1,7 @@
 .program sevenseg
 
-pull block
-mov y, osr
+pull block //default block
+mov y, osr // mov dst, src
 .wrap_target
     out pins, 4 [31]
     out null, 4 [31]
@@ -22,9 +22,9 @@ static inline void sevenseg_program_init(PIO pio, uint sm, uint offset, uint pin
     // Set this pin's GPIO function (connect PIO to the pad)
     // set the slice pins to gpio function PIO
     pio_gpio_init(pio, pin);
-    pio_gpio_init(pio, pin+1);
-    pio_gpio_init(pio, pin+2);
-    pio_gpio_init(pio, pin+3);
+    pio_gpio_init(pio, pin + 1);
+    pio_gpio_init(pio, pin + 2);
+    pio_gpio_init(pio, pin + 3);
 
     // Set the pin direction to output at the PIO
     pio_sm_set_consecutive_pindirs(pio, sm, pin, 4, true);

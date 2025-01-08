@@ -54,7 +54,7 @@ void seven_seg_start_pio(seveng_seg_t *s) {
     uint state_machine = pio_claim_unused_sm(pio, true);
 
     sevenseg_program_init(pio, state_machine, offset, s->pins[0]);
-    pio_sm_put_blocking(pio, state_machine, (1<<8) | 5u);
+    pio_sm_put_blocking(pio, state_machine, (5<<8) | 1u);
 
 }
 

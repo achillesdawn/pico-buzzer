@@ -1,3 +1,17 @@
+# == DO NOT EDIT THE FOLLOWING LINES for the Raspberry Pi Pico VS Code Extension to work ==
+if(WIN32)
+    set(USERHOME $ENV{USERPROFILE})
+else()
+    set(USERHOME $ENV{HOME})
+endif()
+set(sdkVersion 2.1.0)
+set(toolchainVersion 13_3_Rel1)
+set(picotoolVersion 2.1.0)
+set(picoVscode ${USERHOME}/.pico-sdk/cmake/pico-vscode.cmake)
+if (EXISTS ${picoVscode})
+    include(${picoVscode})
+endif()
+# ====================================================================================
 cmake_minimum_required(VERSION 3.13)
 
 # initialize the SDK directly
@@ -16,7 +30,7 @@ pico_sdk_init()
 
 add_executable(${CMAKE_PROJECT_NAME}
     main.c
-    7seg/7seg.c
+    shift_register/shift_register.c
 )
 
 pico_generate_pio_header(7seg ${CMAKE_CURRENT_LIST_DIR}/7seg/7seg.pio)

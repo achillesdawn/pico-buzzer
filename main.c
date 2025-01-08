@@ -4,16 +4,12 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "7seg/7seg.h"
 #include "pico/stdlib.h"
+#include "shift_register/shift_register.h"
 
-const uint8_t PIN_A = 0;
-const uint8_t PIN_B = 1;
-const uint8_t PIN_C = 2;
-const uint8_t PIN_D = 3;
-
-const uint32_t PIN_MASK =
-    (1 << PIN_A) | (1 << PIN_B) | (1 << PIN_C) | (1 << PIN_D);
+const uint8_t SER = 16;
+const uint8_t SHCLK = 17;
+const uint8_t RCLK = 18;
 
 int main() {
 
@@ -23,32 +19,13 @@ int main() {
 
     printf("initializing\n");
 
-    gpio_init_mask(PIN_MASK);
-    gpio_set_dir_out_masked(PIN_MASK);
-    gpio_put_masked(PIN_MASK, PIN_MASK);
-
-    seveng_seg_t *s = seven_seg_initialize(PIN_A, PIN_B, PIN_C, PIN_D);
-
-    uint8_t value = 0;
+    shift_register_t *sr = shift_register_init(SER, RCLK, SHCLK);
 
     while (true) {
-
-        printf("setting %d\n", value);
-
-        seven_seg_set_value(s, value);
-        value += 1;
-
-        if (value > 9) {
-            break;
+        for (uint8_t i = 0; i < 9; i++) {
+            printf("setting %d ", i);
+            shift_register_set(sr, 1 << i);
+            sleep_ms(100);
         }
-
-        sleep_ms(200);
     }
-
-    seven_seg_start_pio(s);
-    
-    while (true){
-        tight_loop_contents();
-    }
-    
 }
