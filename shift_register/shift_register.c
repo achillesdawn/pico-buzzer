@@ -25,6 +25,9 @@ shift_register_init(uint8_t SER, uint8_t RCLK, uint8_t SHCLK) {
 }
 
 inline static void sleep_ns() {
+    // at 125 MHZ each instruction takes 8ns
+    // 4 instructions = 32ns
+    // min switching time for shift register at 4.5v: 25ns
     for (uint8_t i = 0; i < 4; i++) {
         tight_loop_contents();
     }
