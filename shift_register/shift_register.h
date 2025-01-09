@@ -5,10 +5,14 @@ typedef struct shift_register {
     uint8_t ser;
     uint8_t rclk_storage_register_clock;
     uint8_t srclk_shift_register_clock;
+
+    uint8_t current_value;
 } shift_register_t;
 
 shift_register_t *shift_register_init(uint8_t SER, uint8_t RCLK, uint8_t SHCLK);
 
-bool shift_register_set(shift_register_t *sr, uint8_t value);
+void shift_register_set(shift_register_t *sr, uint8_t value);
+
+void shift_register_set_inverted(shift_register_t *sr, uint8_t bit_mask);
 
 #pragma once
