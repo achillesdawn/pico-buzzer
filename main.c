@@ -26,6 +26,14 @@ int16_t map_range(
     return to_min + (int16_t)(percent * (float)to_max);
 }
 
+void print_buffer(bool buf[]) {
+    printf("[");
+    for (uint8_t i = 0; i < 8; i++) {
+        printf("%d,", buf[i]);
+    }
+    printf("]");
+}
+
 int main() {
 
     stdio_init_all();
@@ -40,13 +48,16 @@ int main() {
 
     for (uint8_t i = 0; i < 3; i++) {
         for (uint8_t i = 0; i < 8; i++) {
-            shift_register_set(sr, 1 << i);
+            shift_register_set_masked(sr, 1 << i);
             sleep_ms(30);
         }
     }
     shift_register_set(sr, 0);
 
     const float conversion_factor = 3.3f / (1 << 12);
+
+    bool buffer[8] = {};
+    int16_t last_level = 0;
 
     while (true) {
 
@@ -60,11 +71,21 @@ int main() {
             level
         );
 
-        uint8_t set_value = 0;
-        for (uint8_t i = 0; i < level; i++) {
-            set_value = set_value | (1 << i);
+        if (level != last_level) {
+            for (uint8_t i = 0; i < 8; i++) {
+                if (i < level) {
+                    buffer[i] = true;
+                } else {
+                    buffer[i] = false;
+                }
+            }
+
+            print_buffer(buffer);
+
+            shift_register_set_inverted(sr, buffer);
         }
-        shift_register_set_inverted(sr, set_value);
+
+        last_level = level;
 
         sleep_ms(30);
     }

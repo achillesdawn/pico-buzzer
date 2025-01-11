@@ -11,8 +11,10 @@ typedef struct shift_register {
 
 shift_register_t *shift_register_init(uint8_t SER, uint8_t RCLK, uint8_t SHCLK);
 
-void shift_register_set(shift_register_t *sr, uint8_t value);
+void shift_register_set_masked(shift_register_t *sr, uint8_t mask);
 
-void shift_register_set_inverted(shift_register_t *sr, uint8_t bit_mask);
+void shift_register_set(shift_register_t *sr, bool buf[]);
+
+void shift_register_set_inverted(shift_register_t *sr, bool buf[]);
 
 #pragma once

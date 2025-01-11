@@ -53,20 +53,30 @@ void shift_register_push(shift_register_t *sr, bool value) {
     shift_register_pulse(sr);
 }
 
-void shift_register_set(shift_register_t *sr, uint8_t bit_mask) {
+void shift_register_set_masked(shift_register_t *sr,  uint8_t mask) {
 
     for (uint8_t i = 0; i < 8; i++) {
-        bool bit = bit_mask >> i;
+        bool bit = mask >> i;
         shift_register_push(sr, bit);
     }
     shift_register_latch(sr);
     return;
 }
 
-void shift_register_set_inverted(shift_register_t *sr, uint8_t bit_mask) {
+void shift_register_set(shift_register_t *sr,  bool buf[]) {
 
-    for (uint8_t i = 8; i > 0; i--) {
-        bool bit = bit_mask >> i;
+    for (uint8_t i = 0; i < 8; i++) {
+        bool bit = buf[i];
+        shift_register_push(sr, bit);
+    }
+    shift_register_latch(sr);
+    return;
+}
+
+void shift_register_set_inverted(shift_register_t *sr,  bool buf[]) {
+
+    for (int i = 7; i >= 0; i--) {
+        bool bit = buf[i];
         shift_register_push(sr, bit);
     }
     shift_register_latch(sr);
